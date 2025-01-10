@@ -1,6 +1,7 @@
 package com.metacoding.restserver._core.filter;
 
 import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.metacoding.restserver._core.auth.LoginUser;
 import com.metacoding.restserver._core.util.JwtUtil;
@@ -45,7 +46,10 @@ public class JwtAuthorizationFilter implements Filter {
 
             HttpSession session = request.getSession();
             session.setAttribute("sessionUser", loginUser);
-        }catch (JWTDecodeException jwtDecodeException){
+        } catch (JWTDecodeException jwtDecodeException){
+            onError(response, "토큰 무결성 실패");
+            return;
+        } catch (SignatureVerificationException se) {
             onError(response, "토큰 검증 실패");
             return;
         }
