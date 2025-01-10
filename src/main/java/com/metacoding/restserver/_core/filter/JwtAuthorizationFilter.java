@@ -54,7 +54,6 @@ public class JwtAuthorizationFilter implements Filter {
             return;
         }
 
-
         chain.doFilter(request, response);
     }
 

@@ -37,9 +37,9 @@ public class GeneralExceptionHandler {
         return new ResponseEntity<>(Resp.fail(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> unknownServerError(Exception e) {
-        log.error(e.getMessage());
-        return new ResponseEntity<>(Resp.fail("서버 오류 관리자에게 문의하세요"), HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<?> unknownServerError(Exception e) {
+//        log.error(e.getMessage());
+//        return new ResponseEntity<>(Resp.fail("서버 오류 관리자에게 문의하세요"), HttpStatus.INTERNAL_SERVER_ERROR);
+//    }
 }

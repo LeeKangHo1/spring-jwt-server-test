@@ -3,6 +3,7 @@ package com.metacoding.restserver.post;
 import com.metacoding.restserver._core.auth.LoginUser;
 import com.metacoding.restserver._core.error.exception.Exception401;
 import com.metacoding.restserver._core.error.exception.Exception404;
+import com.metacoding.restserver._core.error.exception.Exception500;
 import com.metacoding.restserver.user.User;
 import com.metacoding.restserver.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,10 +32,26 @@ public class PostService {
         return new PostResponse.DTO(post);
     }
 
-    public List<PostResponse.DTO> 게시글목록보기(){
+    public List<PostResponse.ListDTO> 게시글목록보기(){
         Sort sort = Sort.by(Sort.Direction.DESC, "id");
         List<Post> posts = postRepository.findAll(sort);
-        return posts.stream().map(post -> new PostResponse.DTO(post)).toList();
+
+        List<Integer> ids = posts.stream()
+                .map(post -> post.getUser().getId())
+                .distinct()
+                .toList();
+
+        List<User> users = userRepository.findByIds(ids);
+
+        return posts.stream()
+                .map(post -> {
+                    for(User user : users){
+                        if(user.getId() == post.getUser().getId()){
+                            return new PostResponse.ListDTO(post, user);
+                        }
+                    }
+                    throw new Exception500("작성자가 존재하지 않는 글이 있어요 : "+post.getId());
+                }).toList();
     }
 
     public PostResponse.DTO 게시글상세보기(int id){
@@ -43,3 +60,10 @@ public class PostService {
         return new PostResponse.DTO(post);
     }
 }
+//        List<Integer> ids = posts.stream()
+//                .map(post -> post.getUser().getId())
+//                .distinct()
+//                .toList();
+//
+//        // select * from user_tb where id in (ids);
+//        List<User> users = userRepository.findByIds(ids);
